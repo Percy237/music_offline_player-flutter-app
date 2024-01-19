@@ -1,7 +1,10 @@
+import "dart:math";
+
 import "package:flutter/material.dart";
+import "package:music_offline_player/screens/NowPlaying.dart";
 import 'package:on_audio_query/on_audio_query.dart';
 import "package:permission_handler/permission_handler.dart";
-
+import "package:just_audio/just_audio.dart";
 void main(){
   runApp(const Myapp());
 }
@@ -28,6 +31,22 @@ class AllSongs extends StatefulWidget{
 }
 
 class _AllSongsState extends State<AllSongs>{
+  final OnAudioQuery _audioQuery =  OnAudioQuery();
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  playSong(String? uri){
+    try{
+      _audioPlayer.setAudioSource(
+        AudioSource.uri(
+          Uri.parse(uri!)
+        )
+      );
+         _audioPlayer.play();
+    } on Exception {
+      log(1);
+    }
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -37,7 +56,7 @@ class _AllSongsState extends State<AllSongs>{
   void requestPermission(){
     Permission.storage.request();
   }
-  final _audioQuery = new OnAudioQuery();
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -61,14 +80,27 @@ class _AllSongsState extends State<AllSongs>{
             );
           }
           if(item.data!.isEmpty){
-            return const Center(child: Text("no song found"));
+            return const Center(child: Text("No song found"));
           }
-          return ListView.builder(itemBuilder: (context, index)=>ListTile(
-          leading: const Icon(Icons.music_note),
+          return ListView.builder(
+            itemCount: item.data!.length,
+            itemBuilder: (context, index)=>ListTile(
           title:  Text(item.data![index].displayNameWOExt),
           subtitle: Text("${item.data![index].artist}"),
           trailing: const Icon(Icons.more_horiz),
-          ),itemCount: item.data!.length,);
+            leading: const CircleAvatar(
+              child: Icon(Icons.music_note),
+            ),
+            onTap: (){
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => NowPlaying(songModel: item.data![index], audioPlayer: _audioPlayer,),
+                )
+            );
+            },
+          ),
+          );
         }
       )
     );
