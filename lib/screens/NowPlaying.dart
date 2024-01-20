@@ -125,7 +125,7 @@ class _NowPlayingState extends State<NowPlaying> {
                       IconButton(onPressed: (){
                         setState(() {
                           if(_isPlaying){
-                            widget.audioPlayer.pause();
+                             widget.audioPlayer.pause();
                           }else {
                             widget.audioPlayer.play();
                           }
