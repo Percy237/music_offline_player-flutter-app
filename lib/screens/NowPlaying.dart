@@ -2,7 +2,10 @@ import "dart:developer";
 
 import "package:flutter/material.dart";
 import "package:just_audio/just_audio.dart";
+import 'package:music_offline_player/provider/song_model_provider.dart';
 import "package:on_audio_query/on_audio_query.dart";
+import "package:provider/provider.dart";
+
 
 class NowPlaying extends StatefulWidget {
   const NowPlaying({super.key, required this.songModel, required this.audioPlayer});
@@ -72,9 +75,8 @@ class _NowPlayingState extends State<NowPlaying> {
               Center(
                 child: Column(
                   children: [
-                    CircleAvatar(
-                      radius:100.0,
-                      child: Icon(Icons.music_note, size: 80,),
+                  Center(
+                      child: const ArtWorkWidget(),
                     ),
                     SizedBox(
                       height: 30.0,
@@ -150,6 +152,26 @@ class _NowPlayingState extends State<NowPlaying> {
   void changeTopSeconds(int seconds){
     Duration duration = Duration(seconds: seconds);
     widget.audioPlayer.seek(duration);
+  }
+}
+
+class ArtWorkWidget extends StatelessWidget {
+  const ArtWorkWidget({
+    super.key,
+  });
+
+
+  @override
+  Widget build(BuildContext context) {
+    return QueryArtworkWidget(
+      id: context.watch<SongModelProvider>().id,
+      type: ArtworkType.AUDIO,
+      artworkHeight: 200,
+      artworkWidth: 200,
+      artworkFit: BoxFit.cover,
+      nullArtworkWidget: const Icon(Icons.music_note, size: 200,),
+
+    );
   }
 }
 
